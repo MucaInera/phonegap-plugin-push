@@ -28,6 +28,9 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+
 import com.google.android.gms.gcm.GcmListenerService;
 
 import org.json.JSONArray;
@@ -322,6 +325,11 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
             Log.d(LOG_TAG, "send notification event");
             PushPlugin.sendExtras(extras);
         }
+
+        // Wake up the screen when receive a notification
+        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        WakeLock wakeLock = pm.newWakeLock((PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP), "TAG");
+        wakeLock.acquire();
     }
 
     public void createNotification(Context context, Bundle extras) {
